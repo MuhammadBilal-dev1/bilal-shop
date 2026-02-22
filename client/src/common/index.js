@@ -1,5 +1,5 @@
 const backendDomain =
-  import.meta.env.VITE_BACKEND_URL || "";
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
 
   // http://localhost:8080
 const SummaryApi = {
