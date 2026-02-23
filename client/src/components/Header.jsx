@@ -1,21 +1,22 @@
-import React, { useContext, useState } from "react";
-import Logo from "./logo.jsx";
+import  { useContext, useState } from "react";
+// import Logo from "./logo.jsx";
 import { FiSearch } from "react-icons/fi";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FiLogIn } from "react-icons/fi";
+import { FiLogIn, FiMenu, FiX } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import SummaryApi from "../common/index.js";
 import { toast } from "react-toastify";
 import { FiLogOut } from "react-icons/fi";
 import { setUserDetails } from "../store/userSlice.js";
-import ROLE from "../common/role.js";
+// import ROLE from "../common/role.js";
 import Context from "../context/index.js";
 const Header = () => {
   const user = useSelector((state) => state?.user?.user);
   const dispatch = useDispatch();
   const [menuDisplay, setMenuDisplay] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const context = useContext(Context);
   const navigate = useNavigate();
   const searchInput = useLocation();
@@ -78,7 +79,8 @@ const Header = () => {
             <FiSearch />
           </div>
         </div>
-        <div className="flex items-center gap-7">
+        {/* Desktop actions */}
+        <div className="hidden md:flex items-center gap-7">
           <div className="relative flex justify-center">
             {user?._id && (
               <div
@@ -101,14 +103,14 @@ const Header = () => {
                 <nav>
                   <Link
                     to={"/admin-panel/all-products"}
-                    className="whitespace-nowrap hover:bg-slate-100 p-2 hidden md:block"
+                    className="whitespace-nowrap hover:bg-slate-100 p-2"
                     onClick={() => setMenuDisplay((preve) => !preve)}
                   >
                     Admin panel
                   </Link>
                   <Link
                     to={"/order"}
-                    className="whitespace-nowrap hover:bg-slate-100 p-2 hidden md:block"
+                    className="whitespace-nowrap hover:bg-slate-100 p-2"
                     onClick={() => setMenuDisplay((preve) => !preve)}
                   >
                     Order
@@ -152,6 +154,72 @@ const Header = () => {
               </Link>
             )}
           </div>
+        </div>
+
+        {/* Mobile hamburger */}
+        <div className="md:hidden flex items-center">
+          <button
+            aria-label="Menu"
+            className="text-2xl p-2 rounded-md"
+            onClick={() => setMobileOpen((s) => !s)}
+          >
+            {mobileOpen ? <FiX /> : <FiMenu />}
+          </button>
+          {mobileOpen && (
+            <div className="absolute right-4 top-16 z-50 bg-white rounded-md shadow-lg w-56">
+              <div className="p-2 divide-y">
+                {user?._id ? (
+                  <>
+                    <Link
+                      to={"/order"}
+                      className="flex items-center justify-between px-3 py-2 hover:bg-slate-100 rounded"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span className="flex items-center gap-2">
+                        <FaRegCircleUser /> <span>My Orders</span>
+                      </span>
+                    </Link>
+                    <Link
+                      to={"/cart"}
+                      className="flex items-center justify-between px-3 py-2 hover:bg-slate-100 rounded"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span className="flex items-center gap-2">
+                        <FaShoppingCart /> <span>Cart</span>
+                      </span>
+                      <span className="text-xs bg-red-600 text-white rounded-full px-2 py-0.5">
+                        {context.cartProductCount}
+                      </span>
+                    </Link>
+                    <Link
+                      to={"/admin-panel/all-products"}
+                      className="flex items-center justify-between px-3 py-2 hover:bg-slate-100 rounded"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span>Admin panel</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded text-white bg-red-600 hover:bg-red-700 mt-2"
+                    >
+                      <FiLogOut /> <span>Logout</span>
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to={"/login"}
+                    className="flex items-center gap-2 px-3 py-2 rounded text-white bg-red-600 hover:bg-red-700"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <FiLogIn /> <span>Login</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>
